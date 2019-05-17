@@ -17,7 +17,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener, PermissionHelper.IPermissionCallback {
@@ -103,7 +106,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateMarker(String tag, double latitude, double longtitude){
         if(mapIsReady) {
             LatLng position = new LatLng(latitude, longtitude);
-            mMap.addMarker(new MarkerOptions().position(position).title(tag));
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_marker);
+            mMap.addMarker(new MarkerOptions().position(position).title(tag).icon(icon).rotation(90));
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
             mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
         }
     }
