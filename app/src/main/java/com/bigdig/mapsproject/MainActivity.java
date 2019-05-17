@@ -20,6 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -106,17 +107,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateMarker(String tag, double latitude, double longtitude){
         if(mapIsReady) {
             LatLng position = new LatLng(latitude, longtitude);
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_marker);
-            mMap.addMarker(new MarkerOptions().position(position).title(tag).icon(icon).rotation(90));
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+            showMarker(position, tag+" form");
+            LatLng second = new LatLng(position.latitude+10, position.longitude+10);
+            showMarker(second, tag+" to");
+            LatLngBounds bounds = new LatLngBounds(position, second);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         }
+    }
+
+    private void showMarker(LatLng position, String tag){
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_marker);
+        mMap.addMarker(new MarkerOptions().position(position).title(tag).icon(icon).rotation(90));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(MainActivity.this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
     }
 
     @Override
